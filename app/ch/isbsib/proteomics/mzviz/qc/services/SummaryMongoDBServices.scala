@@ -28,13 +28,13 @@ import scala.concurrent.Future
 class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
   val collectionName = "qc.summary"
   val mainKeyName = "rawfileInfomation.Date"
-/****
+
   setIndexes(List(
-    new Index(Seq("rawfileInfomation.Date"->IndexType.Ascending,"rawfileInfomation.Index"->IndexType.Ascending),name = Some("Date")),
+    new Index(Seq("rawfileInfomation.Date"->IndexType.Descending,"rawfileInfomation.Index"->IndexType.Ascending),name = Some("Date"),unique = false),
     new Index(
       Seq("rawfileInfomation" -> IndexType.Ascending), name = Some("RawfileInfomation"),unique = true))
   )
-  ***/
+
   /**
    * insert a list of Summary entries
    * @param   entries to be inserted
@@ -51,7 +51,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    * @return
    */
   def listAll: Future[Seq[QcSummaryEntry]] = {
-    collection.find(Json.obj()).cursor[QcSummaryEntry].collect[List]()
+    collection.find(Json.obj()).sort(Json.obj("rawfileInfomation.Date" -> -1)).cursor[QcSummaryEntry].collect[List]()
   }
   /**
    * retieves all entries for a given date
@@ -69,7 +69,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    */
   def findAllBtw2Date(d1: String,d2:String): Future[Seq[QcSummaryEntry]] = {
     val query = Json.obj("rawfileInfomation.Date" ->Json.obj("$gte"-> d1,"$lte" ->d2))
-    collection.find(query).cursor[QcSummaryEntry].collect[List]()
+    collection.find(query).sort(Json.obj("rawfileInfomation.Date" -> -1)).cursor[QcSummaryEntry].collect[List]()
   }
   /**
    * remove all entries from the mongodb
