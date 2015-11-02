@@ -45,6 +45,7 @@ POST          /qc/summaryLoad                                        ch.isbsib.p
 GET           /qc/summary                                            ch.isbsib.proteomics.mzviz.controllers.qc.QcController.listAll
 GET           /qc/summary/:qcDate                                    ch.isbsib.proteomics.mzviz.controllers.qc.QcController.findQcSummaryEntryByDate(qcDate)
 GET           /qc/summary/:qcDate1/:qcDate2                          ch.isbsib.proteomics.mzviz.controllers.qc.QcController.findQcSummaryBtw2Date(qcDate1,qcDate2)
+DELETE        /qc/summary/:qcDate1/:qcDate2                          ch.isbsib.proteomics.mzviz.controllers.qc.QcController.deleteQcSummaryBtw2Date(qcDate1,qcDate2)
 
 GET           /docs/*file                                            controllers.Assets.at(path="/public/docs", file)
 GET           /api-docs                                              controllers.ApiHelpController.getResources
