@@ -3,14 +3,14 @@ package ch.isbsib.proteomics.mzviz.qc.services
 import java.text.{DateFormat, SimpleDateFormat}
 
 import ch.isbsib.proteomics.mzviz.commons.services.{MongoNotFoundException, MongoDBService}
-import ch.isbsib.proteomics.mzviz.qc.models.QcSummaryEntry
+import ch.isbsib.proteomics.mzviz.qc.models.{RawfileInfomation, QcSummaryEntry}
 
 
 import ch.isbsib.proteomics.mzviz.qc.services.JsonQCFormats._
 import ch.isbsib.proteomics.mzviz.theoretical.SequenceSource
 import org.joda.time.format.ISODateTimeFormat
 import play.api.libs.iteratee.Enumerator
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, JsString, Json}
 import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api._
@@ -18,6 +18,7 @@ import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson
 import reactivemongo.bson.BSON
 import reactivemongo.core.commands.{Count, LastError}
+//import sun.plugin.javascript.JSObject
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,7 +31,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
   val mainKeyName = "rawfileInfomation.Date"
 
   setIndexes(List(
-    new Index(Seq("rawfileInfomation.Date"->IndexType.Descending,"rawfileInfomation.Index"->IndexType.Ascending),name = Some("Date"),unique = false),
+    new Index(Seq("rawfileInfomation.Date"->IndexType.Ascending,"rawfileInfomation.Index"->IndexType.Ascending),name = Some("Date"),unique = false),
     new Index(
       Seq("rawfileInfomation" -> IndexType.Ascending), name = Some("RawfileInfomation"),unique = true))
   )
@@ -51,7 +52,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    * @return
    */
   def listAll: Future[Seq[QcSummaryEntry]] = {
-    collection.find(Json.obj()).sort(Json.obj("rawfileInfomation.Date" -> -1)).cursor[QcSummaryEntry].collect[List]()
+    collection.find(Json.obj()).sort(Json.obj("rawfileInfomation.Date" -> 1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
   }
   /**
    * retieves all entries for a given date
@@ -69,9 +70,35 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    */
   def findAllBtw2Date(d1: String,d2:String): Future[Seq[QcSummaryEntry]] = {
     val query = Json.obj("rawfileInfomation.Date" ->Json.obj("$gte"-> d1,"$lte" ->d2))
-    collection.find(query).sort(Json.obj("rawfileInfomation.Date" -> -1)).cursor[QcSummaryEntry].collect[List]()
+    collection.find(query).sort(Json.obj("rawfileInfomation.Date" -> 1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
   }
+
+
   /**
+   * retieves all entries for a given date
+   * @param d1,d2 the dates
+   * @return
+   */
+  def deleteAllBtw2Date(d1: String,d2:String): Future[Boolean] = {
+    val query = Json.obj("rawfileInfomation.Date" ->Json.obj("$gte"-> d1,"$lte" ->d2))
+    collection.remove(query).map{
+      case e: LastError if e.inError => throw MongoNotFoundException(e.errMsg.get)
+      case _ => true
+    }
+  }
+
+
+
+  def updateCmtByRawfileInfo(idx:RawfileInfomation,cmt:String): Future[Boolean] = {
+    collection.update(Json.obj("rawfileInfomation"->idx),Json.obj("$set"->Json.obj("Cmt"->cmt))).map{
+      case e: LastError if e.inError => throw MongoNotFoundException(e.errMsg.get)
+      case _ => true
+    }
+  }
+
+
+  /**
+   *
    * remove all entries from the mongodb
    * @param d the date
    * @return

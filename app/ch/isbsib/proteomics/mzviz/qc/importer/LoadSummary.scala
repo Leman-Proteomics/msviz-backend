@@ -32,25 +32,7 @@ class LoadSummary (file:File) {
 
   //extract the Summary lines except total line
   val mSummary = itLines.toList.dropRight(1).map (s => (header zip s.split("\t")).toMap)
-  /***
-  def getSummaryEntry:Seq[QcSummaryEntry] = itLines.toList.drop(1).dropRight(1).map({ s=>
-      val data = s.split("\t")
-      val rawfile = getInfo(data(0))
-      val protein = rawfile(0)
-      val quantity = rawfile(1)
-      val machineName = rawfile(2)
-      val columnType = rawfile(3) + "_" + rawfile(4)
 
-      val Date = if (isAllDigits(rawfile(5)))  rawfile(5)
-                 else throw new SummaryParsingException(s"It's a value not valide for date:\n$rawfile(5)")
-
-      val Index = rawfile(6)
-
-      val rawfileInfomation=RawfileInfomation(protein,quantity,machineName,columnType,Date,Index)
-
-      QcSummaryEntry(rawfileInfomation,data(14).toInt,data(15).toInt,data(20).toInt,data(28).toInt)
-  })
-  ***/
   def getSummaryEntry:Seq[QcSummaryEntry] = mSummary.map{
       m => {
         val rawfile = getInfo(m("Raw file"))
@@ -63,7 +45,8 @@ class LoadSummary (file:File) {
         val qcDate= QcDate(parserDate(rawfile(5)))
         val qcIndex = QcIndex(rawfile(6))
         val rawfileInfo=RawfileInfomation(proteinName,proteinQuantity,machineName,columnType,qcDate,qcIndex)
-        QcSummaryEntry(rawfileInfo,m("MS").toInt,m("MS/MS").toInt,m("MS/MS Identified").toInt,m("Peptide Sequences Identified").toInt)
+        val cmt=""
+        QcSummaryEntry(rawfileInfo,m("MS").toInt,m("MS/MS").toInt,m("MS/MS Identified").toInt,m("Peptide Sequences Identified").toInt, m("MS/MS Identified [%]").toDouble,m("Peaks Repeatedly Sequenced [%]").toDouble,cmt)
       }
   }
 

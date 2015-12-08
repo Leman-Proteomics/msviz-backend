@@ -30,4 +30,9 @@ package object qc {
   case class QcIndex(value: String) extends AnyVal {
     override def toString = value
   }
+
+  case class RawfileInfomation(value: String) extends AnyVal {
+    //override def toList =value
+  }
+
 }
