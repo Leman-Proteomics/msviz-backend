@@ -21,8 +21,8 @@ class LoadSummarySpecs extends Specification with ScalaFutures{
     val summaryEntry = qcSummary.getSummaryEntry
     val n = summaryEntry.length
 
-    "numberOfEntries should be 2" in {
-      n must equalTo(2)
+    "numberOfEntries should be 5" in {
+      n must equalTo(5)
     }
     "rawfile Date should be yymmdd " in {
       summaryEntry(0).rawfileInfomation.Date.value must equalTo("150508")
@@ -42,8 +42,15 @@ class LoadSummarySpecs extends Specification with ScalaFutures{
     "rawfile peptideSeq should be 57 " in {
       summaryEntry(0).PeptideSeq must equalTo(57)
     }
-
-
+    "rawfile peptideSeq should be 6.56 " in {
+      summaryEntry(0).MMSIdentifyPtg must equalTo(6.56)
+    }
+    "rawfile Peaks Repeatedly Sequenced should be 7.08 " in {
+      summaryEntry(0).PkRepSeqPtg must equalTo(7.08)
+    }
+    "rawfile Cmt should be '' " in {
+      summaryEntry(0).Cmt must equalTo("")
+    }
 
     "get information from rawfile" should {
       val raw_file = "Hela_300ng_Qex_Dionex_00_150507_00"
