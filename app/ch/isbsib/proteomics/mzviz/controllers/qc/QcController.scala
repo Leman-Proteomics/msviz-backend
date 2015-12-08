@@ -6,12 +6,14 @@ import javax.ws.rs.PathParam
 
 import ch.isbsib.proteomics.mzviz.controllers.JsonCommonsFormats._
 import ch.isbsib.proteomics.mzviz.controllers.CommonController
-import ch.isbsib.proteomics.mzviz.experimental.models.ExpMSnSpectrum
-import ch.isbsib.proteomics.mzviz.qc.QcDate
+
+import ch.isbsib.proteomics.mzviz.qc._
 import ch.isbsib.proteomics.mzviz.qc.importer.LoadSummary
-import ch.isbsib.proteomics.mzviz.qc.models.QcSummaryEntry
+import ch.isbsib.proteomics.mzviz.qc.models.{UpdateInfo, RawfileInfomation, Quantity, QcSummaryEntry}
 import ch.isbsib.proteomics.mzviz.qc.services.SummaryMongoDBServices
 import com.wordnik.swagger.annotations._
+import play.api.Play.current
+import play.api.cache.Cached
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import ch.isbsib.proteomics.mzviz.qc.services.JsonQCFormats._
 import play.api.libs.json._
@@ -19,9 +21,11 @@ import com.wordnik.swagger.annotations._
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Action
 import play.api.mvc.BodyParsers.parse
+import play.mvc.BodyParser.AnyContent
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.Logger
 
 /**
  * Created by qinfang Jolliet on 12/08/15.
@@ -42,8 +46,10 @@ object QcController extends CommonController {
   def loadQcSummary() = Action.async(parse.temporaryFile) {
     request => val entries = LoadSummary(request.body.file).getSummaryEntry
       SummaryMongoDBServices().insert(entries).map{n => Ok(Json.obj("inserted" -> n))
+
+      Ok("yo" + request.body.file.toString)
       }.recover {
-      case e => BadRequest(Json.toJson(e))
+        case e => BadRequest(Json.toJson(e))
     }
   }
 
@@ -91,14 +97,89 @@ object QcController extends CommonController {
       }
     }
 
-  @ApiOperation(nickname = "deleteQcSummaryEntryByDate",
+    @ApiOperation(nickname = "UpdateQcSummaryByRawfileInfo",
+      value = "update SummaryEntry by rawfileInfomation",
+      notes = """update QcSummaryEntry information """,
+      response = classOf[Boolean],
+      httpMethod = "POST")
+    @ApiImplicitParams(Array(
+      new ApiImplicitParam(name = "body", value = "updateInfo", required = true, dataType = "application/json", paramType = "body")
+    ))
+   def updateCmtByRawfileInfo=
+
+      Action.async {
+        request =>
+          val updateInfo:UpdateInfo = request.body.asText match {
+
+            case Some(s) => Json.parse(s).as[UpdateInfo]
+            case None => throw new Exception("you have to provider rawfileInfomation!")
+          }
+          println("print upinfo"+ updateInfo.Cmt)
+          SummaryMongoDBServices().updateCmtByRawfileInfo(updateInfo.rawfileInfomation,updateInfo.Cmt)
+                    .map {
+                    n => Ok(Json.obj("inserted" -> n))
+                      Ok("update" + updateInfo.Cmt)
+
+                  }.recover {
+                    case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+                  }
+
+      }
+
+
+
+
+
+
+  @ApiOperation(nickname = "deleteQcSummaryEntryBtw2Date",
+    value = "delete SummaryEntry between two dates",
+    notes = """return success or fail """,
+    response = classOf[Seq[QcSummaryEntry]],
+    httpMethod = "DELETE")
+  def deleteQcSummaryBtw2Date(
+                             @ApiParam(value = """QcDate1""", defaultValue = "") @PathParam("Date") qcDate1: String,
+                             @ApiParam(value = """QcDate2""", defaultValue = "") @PathParam("Date") qcDate2: String) =
+    Action.async {
+      SummaryMongoDBServices().deleteAllBtw2Date(qcDate1,qcDate2)
+        .map { x => Ok(Json.obj("deleted" -> x))
+      }.recover {
+        case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+      }
+    }
+
+  @ApiOperation(nickname = "optionsQcSummary",
+    value = "fake SummaryEntry between two dates",
+    notes = """return success or fail """,
+    response = classOf[Int],
+    httpMethod = "OPTIONS")
+  def optionsDelSummary(@ApiParam(value = """QcVal1""", defaultValue = "") @PathParam("Val1") val1: String,
+                       @ApiParam(value = """QcVal2""", defaultValue = "") @PathParam("Val2") val2: String) =
+    Action.async {
+      Future {
+        Ok("Ok")
+      }
+    }
+
+  @ApiOperation(nickname = "optionsUpdateCmt",
+    value = "fake updateCmt ",
+    notes = """return success or fail """,
+    response = classOf[Int],
+    httpMethod = "OPTIONS")
+  def optionsQcSummary=
+    Action.async {
+      Future {
+        Ok("Ok")
+      }
+    }
+
+  @ApiOperation(nickname = "deleteQcSummaryByDate",
     value = "delete QcSummaryEntry data by Date",
     notes = """only can delete one day's data""",
     response = classOf[String],
     httpMethod = "DELETE")
   def deleteQcSummaryByDate(qcDate: String) = Action.async {
-    SummaryMongoDBServices().deleteAllByDate(qcDate).map { x =>
-      Ok("OK")
+    SummaryMongoDBServices().deleteAllByDate(qcDate).map { x=> Ok(Json.obj("deleted" -> x))
+
     }
   }
 

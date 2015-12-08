@@ -13,6 +13,7 @@ import play.api.libs.Files
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc._
+import play.api.Logger
 
 import scala.concurrent.Future
 
@@ -30,7 +31,9 @@ trait CommonController extends Controller {
     Future {
       val reqFile = request.body.file(paramName).get
       val filename = reqFile.filename
+      Logger.info(s"Load file name is $filename")
       val fTmp = File.createTempFile(new File(filename).getName + "-", ".local")
+
       fTmp.delete()
       fTmp.deleteOnExit()
       reqFile.ref.moveTo(fTmp)
