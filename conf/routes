@@ -41,11 +41,16 @@ DELETE        /search/:searchIds                                     ch.isbsib.p
 
 GET           /compare/:searchIds                                    ch.isbsib.proteomics.mzviz.controllers.matches.ProteinMatchMultipleSearchesController.findAllProteinsForMultipleSearchIds(searchIds, withModif:Option[String])
 
-POST          /qc/summaryLoad                                        ch.isbsib.proteomics.mzviz.controllers.qc.QcController.loadQcSummary()
+POST          /qc/summary                                            ch.isbsib.proteomics.mzviz.controllers.qc.QcController.loadQcSummary()
 GET           /qc/summary                                            ch.isbsib.proteomics.mzviz.controllers.qc.QcController.listAll
 GET           /qc/summary/:qcDate                                    ch.isbsib.proteomics.mzviz.controllers.qc.QcController.findQcSummaryEntryByDate(qcDate)
 GET           /qc/summary/:qcDate1/:qcDate2                          ch.isbsib.proteomics.mzviz.controllers.qc.QcController.findQcSummaryBtw2Date(qcDate1,qcDate2)
 DELETE        /qc/summary/:qcDate1/:qcDate2                          ch.isbsib.proteomics.mzviz.controllers.qc.QcController.deleteQcSummaryBtw2Date(qcDate1,qcDate2)
+PUT           /qc/summary                                            ch.isbsib.proteomics.mzviz.controllers.qc.QcController.updateCmtByRawfileInfo()
+
+OPTIONS       /qc/summary/:val1/:val2                                ch.isbsib.proteomics.mzviz.controllers.qc.QcController.optionsDelSummary(val1,val2)
+OPTIONS       /qc/summary                                            ch.isbsib.proteomics.mzviz.controllers.qc.QcController.optionsQcSummary()
+
 
 GET           /docs/*file                                            controllers.Assets.at(path="/public/docs", file)
 GET           /api-docs                                              controllers.ApiHelpController.getResources
