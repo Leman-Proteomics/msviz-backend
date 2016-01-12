@@ -71,13 +71,37 @@ object QcDeviceInfoController extends CommonController{
     response = classOf[QcDeviceInfo],
     httpMethod = "DELETE")
   def delete(
-                               @ApiParam(value = """DevDate""", defaultValue = "") @PathParam("Date") devDate: String,
-                               @ApiParam(value = """DevType""", defaultValue = "") @PathParam("Date") devType: String) =
+                               @ApiParam(value = """DevDate""", defaultValue = "") @PathParam("DevDate") devDate: String,
+                               @ApiParam(value = """DevType""", defaultValue = "") @PathParam("DevType") devType: String) =
     Action.async {
       DeviceInfoMongoDBServices().delete(devDate,devType)
         .map { x => Ok(Json.obj("deleted" -> x))
       }.recover {
         case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+      }
+    }
+
+  @ApiOperation(nickname = "optionQcDevInfo",
+    value = "fake qc device information ",
+    notes = """return success or fail """,
+    response = classOf[Int],
+    httpMethod = "OPTIONS")
+  def optionQcDevInfo =
+    Action.async {
+      Future {
+        Ok("Ok")
+      }
+    }
+  @ApiOperation(nickname = "optionsQcDeviceInfo",
+    value = "fake delete device information ",
+    notes = """return success or fail """,
+    response = classOf[Int],
+    httpMethod = "OPTIONS")
+  def optionDelDevInfo(@ApiParam(value = """DevDate""", defaultValue = "") @PathParam("DevDate") devDate: String,
+                       @ApiParam(value = """DevType""", defaultValue = "") @PathParam("DevType") devType: String) =
+    Action.async {
+      Future {
+        Ok("Ok")
       }
     }
 
