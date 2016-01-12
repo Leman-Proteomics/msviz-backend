@@ -1,7 +1,8 @@
 package ch.isbsib.proteomics.mzviz.qc.services
 import java.util
 import ch.isbsib.proteomics.mzviz.qc._
-import ch.isbsib.proteomics.mzviz.qc.models.{UpdateInfo, Quantity, QcSummaryEntry, RawfileInfomation}
+import ch.isbsib.proteomics.mzviz.qc.models.RawfileInfomation
+import ch.isbsib.proteomics.mzviz.qc.models._
 import org.joda.time.DateTime
 import play.api.libs.json._
 
@@ -47,6 +48,7 @@ object JsonQCFormats {
   implicit val formatQuantity =  Json.format[Quantity]
   implicit val formatRawFileInformation =  Json.format[RawfileInfomation]
   implicit val formatSummary =  Json.format[QcSummaryEntry]
+  implicit val formatDeviceInfo =  Json.format[QcDeviceInfo]
   implicit val formatUpdateInfo =  Json.format[UpdateInfo]
 
 }
