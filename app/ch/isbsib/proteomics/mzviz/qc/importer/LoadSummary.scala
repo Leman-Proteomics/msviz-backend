@@ -46,7 +46,8 @@ class LoadSummary (file:File) {
         val qcIndex = QcIndex(rawfile(6))
         val rawfileInfo=RawfileInfomation(proteinName,proteinQuantity,machineName,columnType,qcDate,qcIndex)
         val cmt=""
-        QcSummaryEntry(rawfileInfo,m("MS").toInt,m("MS/MS").toInt,m("MS/MS Identified").toInt,m("Peptide Sequences Identified").toInt, m("MS/MS Identified [%]").toDouble,m("Peaks Repeatedly Sequenced [%]").toDouble,cmt)
+        QcSummaryEntry(rawfileInfo,m("MS").toInt,m("MS/MS").toInt,m("MS/MS Identified").toInt,m("Peptide Sequences Identified").toInt,
+          m("MS/MS Identified [%]").toDouble,m("Peaks Repeatedly Sequenced [%]").toDouble,m("Mass Standard Deviation [ppm]").toDouble,cmt)
       }
   }
 
