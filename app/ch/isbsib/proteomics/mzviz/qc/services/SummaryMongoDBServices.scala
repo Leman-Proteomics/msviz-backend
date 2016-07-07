@@ -52,7 +52,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    * @return
    */
   def listAll: Future[Seq[QcSummaryEntry]] = {
-    collection.find(Json.obj()).sort(Json.obj("rawfileInfomation.Date" -> 1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
+    collection.find(Json.obj()).sort(Json.obj("rawfileInfomation.Date" -> -1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
   }
   /**
    * retieves all entries for a given date
@@ -70,7 +70,7 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
    */
   def findAllBtw2Date(d1: String,d2:String): Future[Seq[QcSummaryEntry]] = {
     val query = Json.obj("rawfileInfomation.Date" ->Json.obj("$gte"-> d1,"$lte" ->d2))
-    collection.find(query).sort(Json.obj("rawfileInfomation.Date" -> 1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
+    collection.find(query).sort(Json.obj("rawfileInfomation.Date" -> -1,"rawfileInfomation.Index"->1)).cursor[QcSummaryEntry].collect[List]()
   }
 
 
