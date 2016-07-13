@@ -3,7 +3,6 @@ package ch.isbsib.proteomics.mzviz.qc.services
 import java.text.{DateFormat, SimpleDateFormat}
 
 import ch.isbsib.proteomics.mzviz.commons.services.{MongoNotFoundException, MongoDBService}
-import ch.isbsib.proteomics.mzviz.matches.models.SearchInfo
 import ch.isbsib.proteomics.mzviz.qc.models.{QcDeviceInfo, RawfileInfomation, QcSummaryEntry}
 import ch.isbsib.proteomics.mzviz.qc.services.JsonQCFormats._
 
@@ -58,6 +57,16 @@ class DeviceInfoMongoDBServices (val db: DefaultDB) extends MongoDBService{
    */
   def list: Future[List[QcDeviceInfo]] = {
     collection.find(Json.obj()).cursor[QcDeviceInfo].collect[List]()
+  }
+
+  /**
+   * retieves all devinfos between given dates
+   * @param d1,d2 the dates
+   * @return
+   */
+  def findDevInfoBtw2Date(d1: String,d2:String): Future[Seq[QcDeviceInfo]] = {
+    val query = Json.obj("devDate" ->Json.obj("$gte"-> d1,"$lte" ->d2))
+    collection.find(query).sort(Json.obj("devDate" -> 1)).cursor[QcDeviceInfo].collect[List]()
   }
 
 }
