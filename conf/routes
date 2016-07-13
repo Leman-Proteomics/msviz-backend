@@ -53,6 +53,7 @@ OPTIONS        /qc/summary                                            ch.isbsib.
 
 POST           /qc/deviceInfo                                         ch.isbsib.proteomics.mzviz.controllers.qc.QcDeviceInfoController.addDeviceInfo()
 GET            /qc/deviceInfo                                         ch.isbsib.proteomics.mzviz.controllers.qc.QcDeviceInfoController.list()
+GET            /qc/deviceInfo/:qcDate1/:qcDate2                       ch.isbsib.proteomics.mzviz.controllers.qc.QcDeviceInfoController.findDevInfoBtw2Date(qcDate1,qcDate2)
 DELETE         /qc/deviceInfo/:devDate/:devType                       ch.isbsib.proteomics.mzviz.controllers.qc.QcDeviceInfoController.delete(devDate,devType)
 
 OPTIONS        /qc/deviceInfo/:devDate/:devType                       ch.isbsib.proteomics.mzviz.controllers.qc.QcDeviceInfoController.optionDelDevInfo(devDate,devType)
