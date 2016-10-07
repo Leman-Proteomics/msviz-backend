@@ -9,7 +9,7 @@ import ch.isbsib.proteomics.mzviz.controllers.CommonController
 
 import ch.isbsib.proteomics.mzviz.qc._
 import ch.isbsib.proteomics.mzviz.qc.importer.LoadSummary
-import ch.isbsib.proteomics.mzviz.qc.models.{UpdateInfo, RawfileInfomation, Quantity, QcSummaryEntry}
+import ch.isbsib.proteomics.mzviz.qc.models._
 import ch.isbsib.proteomics.mzviz.qc.services.SummaryMongoDBServices
 import com.wordnik.swagger.annotations._
 import play.api.Play.current
@@ -117,14 +117,60 @@ object QcController extends CommonController {
           println("print upinfo"+ updateInfo.Cmt)
           SummaryMongoDBServices().updateCmtByRawfileInfo(updateInfo.rawfileInfomation,updateInfo.Cmt)
                     .map {
-                    n => Ok(Json.obj("inserted" -> n))
+                    n => Ok(Json.obj("Updated" -> n))
                       Ok("update" + updateInfo.Cmt)
+
+                  }.recover {
+            case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+          }
+
+      }
+
+  @ApiOperation(nickname = "UpdateQcSelByRawfileInfo",
+    value = "update Summary Selectionby rawfileInfomation",
+    notes = """update QcSummaryEntry Selection """,
+    response = classOf[Boolean],
+    httpMethod = "POST")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "body", value = "updateInfo", required = true, dataType = "application/json", paramType = "body")
+  ))
+  def updateInfoByRawfileInfo(@ApiParam(name = "updateType", value = "update column type") @PathParam("updateType") updateType: String) =
+
+            updateType match {
+              case "sel" =>
+                Action.async {
+                request =>
+                  val updateInfo: UpdateSel = request.body.asText match {
+                    case Some(s) => Json.parse(s).as[UpdateSel]
+                    case None => throw new Exception("you have to provider rawfileInfomation!")
+                  }
+                  SummaryMongoDBServices().updateSelByRawfileInfo(updateInfo.rawfileInfomation, updateInfo.selFlg)
+                    .map {
+                    n => Ok(Json.obj("Updated" -> n))
+                      Ok("update" + updateInfo.selFlg)
 
                   }.recover {
                     case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
                   }
+                }
+              case "cmt" =>
+                Action.async {
+                  request =>
+                    val updateInfo: UpdateInfo = request.body.asText match {
+                      case Some(s) => Json.parse(s).as[UpdateInfo]
+                      case None => throw new Exception("you have to provider rawfileInfomation!")
+                    }
+                    SummaryMongoDBServices().updateCmtByRawfileInfo(updateInfo.rawfileInfomation, updateInfo.Cmt)
+                      .map {
+                      n => Ok(Json.obj("Updated" -> n))
+                        Ok("update" + updateInfo.Cmt)
 
-      }
+                    }.recover {
+                      case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+                    }
+                }
+
+            }
 
 
 

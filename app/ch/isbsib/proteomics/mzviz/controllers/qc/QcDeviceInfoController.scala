@@ -81,6 +81,22 @@ object QcDeviceInfoController extends CommonController{
       }
     }
 
+  @ApiOperation(nickname = "findDevInfoBtw2Date",
+    value = "find Device between two dates",
+    notes = """Returns the Device information """,
+    response = classOf[Seq[QcDeviceInfo]],
+    httpMethod = "GET")
+  def findDevInfoBtw2Date(
+                             @ApiParam(value = """QcDate1""", defaultValue = "") @PathParam("Date") qcDate1: String,
+                             @ApiParam(value = """QcDate2""", defaultValue = "") @PathParam("Date") qcDate2: String) =
+    Action.async {
+      DeviceInfoMongoDBServices().findDevInfoBtw2Date(qcDate1,qcDate2)
+        .map { deviceInfo => Ok(Json.toJson(deviceInfo))
+      }.recover {
+        case e => BadRequest(e.getMessage + e.getStackTrace.mkString("\n"))
+      }
+    }
+
   @ApiOperation(nickname = "optionQcDevInfo",
     value = "fake qc device information ",
     notes = """return success or fail """,
