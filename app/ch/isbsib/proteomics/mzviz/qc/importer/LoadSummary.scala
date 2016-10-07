@@ -7,6 +7,7 @@ import ch.isbsib.proteomics.mzviz.commons._
 import ch.isbsib.proteomics.mzviz.qc._
 import ch.isbsib.proteomics.mzviz.qc.models.{QcSummaryEntry, RawfileInfomation}
 import org.joda.time.DateTime
+import org.scalacheck.Prop.True
 
 
 import scala.io.Source
@@ -47,7 +48,7 @@ class LoadSummary (file:File) {
         val rawfileInfo=RawfileInfomation(proteinName,proteinQuantity,machineName,columnType,qcDate,qcIndex)
         val cmt=""
         QcSummaryEntry(rawfileInfo,m("MS").toInt,m("MS/MS").toInt,m("MS/MS Identified").toInt,m("Peptide Sequences Identified").toInt,
-          m("MS/MS Identified [%]").toDouble,m("Peaks Repeatedly Sequenced [%]").toDouble,m("Mass Standard Deviation [ppm]").toDouble,cmt)
+          m("MS/MS Identified [%]").toDouble,m("Peaks Repeatedly Sequenced [%]").toDouble,m("Mass Standard Deviation [ppm]").toDouble,cmt,true)
       }
   }
 
@@ -77,6 +78,7 @@ object LoadSummary {
   def apply(file: File) = new LoadSummary(file)
 
 }
+
 
 
 

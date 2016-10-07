@@ -96,6 +96,13 @@ class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
     }
   }
 
+  def updateSelByRawfileInfo(idx:RawfileInfomation,selFlg:Boolean): Future[Boolean] = {
+    collection.update(Json.obj("rawfileInfomation"->idx),Json.obj("$set"->Json.obj("selFlg"->selFlg))).map{
+      case e: LastError if e.inError => throw MongoNotFoundException(e.errMsg.get)
+      case _ => true
+    }
+  }
+
 
   /**
    *

@@ -11,11 +11,12 @@ import scala.util.{Failure, Success, Try}
  */
 //case class QcSummaryEntry(rawfileInfomation:RawfileInfomation,MS:Int,MMS:Int,MmsIdentify:Int,PeptideSeq:Int,MMSIdentifyPtg:Double,PkRepSeqPtg:Double)
 
-case class QcSummaryEntry(rawfileInfomation:RawfileInfomation,MS:Int,MMS:Int,MmsIdentify:Int,PeptideSeq:Int,MMSIdentifyPtg:Double,PkRepSeqPtg:Double,MassStdDev:Double,Cmt:String)
+case class QcSummaryEntry(rawfileInfomation:RawfileInfomation,MS:Int,MMS:Int,MmsIdentify:Int,PeptideSeq:Int,MMSIdentifyPtg:Double,PkRepSeqPtg:Double,MassStdDev:Double,Cmt:String,selFlg:Boolean)
 
 //case class RawfileInfomation(proteinName:ProteinName,pQuantity:ProteinQuantity,machineName:MachineName,columnType:ColumnType,Date:QcDate,Index:QcIndex)
 case class RawfileInfomation(proteinName:ProteinName,pQuantity:ProteinQuantity,machineName:MachineName,columnType:ColumnType,Date:QcDate,Index:QcIndex)
 
 
 case class UpdateInfo(rawfileInfomation:RawfileInfomation,Cmt:String)
+case class UpdateSel(rawfileInfomation:RawfileInfomation,selFlg:Boolean)
 

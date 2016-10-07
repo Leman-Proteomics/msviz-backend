@@ -50,5 +50,12 @@ object JsonQCFormats {
   implicit val formatSummary =  Json.format[QcSummaryEntry]
   implicit val formatDeviceInfo =  Json.format[QcDeviceInfo]
   implicit val formatUpdateInfo =  Json.format[UpdateInfo]
+  implicit val formatUpdateSel =  Json.format[UpdateSel]
+
+  implicit val formatEliteMonitorInfo =  Json.format[EliteMonitorInfo]
+
+  implicit val formatLumosMonitorInfo =  Json.format[LumosMonitorInfo]
+
+  implicit val formatQexTransInfo =  Json.format[QexTransInfo]
 
 }
