@@ -14,8 +14,9 @@ import reactivemongo.core.commands.{Count, LastError}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 /**
- * Created by qjolliet on 13/07/16.
+ * Created by qjolliet for new functions on 13/07/16.
  */
+
 class QexTransInfoDBServices (val db: DefaultDB) extends MongoDBService{
   val collectionName = "Qex.Transmisson"
   val mainKeyName = "date"
