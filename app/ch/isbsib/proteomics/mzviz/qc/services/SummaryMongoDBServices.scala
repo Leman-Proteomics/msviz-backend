@@ -24,7 +24,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
- * Created by qjolliet on 04/08/15.
+ * Created by qjolliet on 04/08/15.test from new PC
  */
 class SummaryMongoDBServices(val db: DefaultDB) extends MongoDBService  {
   val collectionName = "qc.summary"
